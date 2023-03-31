@@ -1,0 +1,14 @@
+{
+  "logins": [
+    {
+      "login": "testLogin",
+      "username": "testUsername",
+      "password": "testPassword"
+    },
+    {
+      "login": "testLogin2",
+      "username": "testUsername2",
+      "password": "testPassword2"
+    }
+  ]
+}
