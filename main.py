@@ -6,35 +6,65 @@
 # GitHub by GitHub Inc.; Git by Linus Torvalds, Junio C Hamano | Open Source Repository Sync & Version control
 # --- 
 
-# make preferences functionality
-
-
 import os
 import json
 
-name = ""
+print()
+debug_del = False
+if debug_del == True:
+    if(os.path.exists("logins.json")):
+        os.remove("logins.json")
+    if(os.path.exists("config.txt")):
+        os.remove("config.txt")
+
+
+# File Manipulation
+def write_to_file(filetype, filename, export): # Avaiable File Formats: txt, json
+    if filetype == "json":
+        input_json = json.dumps(export, indent=2)
+        with open(filename, "w") as l:
+            l.write(input_json)
+    elif filetype == "txt":
+        with open(filename, "w") as l:
+            l.write(export)
+    else: 
+        print("ERROR: file_type not supported.")
+
 
 # Preferences File creation
 if(os.path.exists("config.txt") == False):
     print("ERROR: config.txt failed to load")
-    open("config.txt", "w")
+    correct_entry = False
+    while(correct_entry == False):
+        print("Please enter your password requirements\n| Weak (w) | Moderate (m) | Strong (s) |")
+        pass_req = input("> ")
+        if(pass_req == "w" or pass_req == "m" or pass_req == "s"):
+            correct_entry = True
+        else:
+            print("\nEntry Prompt incorrect! ")
+    config_export = (pass_req)
+    write_to_file("txt", "config.txt", config_export)
     print("config.txt created...")
+pref = open("config.txt", "r") # read pref list 
+pass_req = pref.readline()
 
+
+# Login list Creation
 if(os.path.exists("logins.json")): # Check if a login.json file exists
     print("Logins.json Detected...")
 else: 
-    open("logins.json", "w") # if 'lgons.json' doesn't exist, create it and insert dictionary format
+    open("logins.json", "w") # if 'logins.json' doesn't exist, create it and insert dictionary format
     print("ERROR: logins.json not detected")
     format_dict = {"logins": []}
-    format_dict_json = json.dumps(format_dict, indent=2)
-    with open("logins.json", "r+") as l:
-        l.write(format_dict_json)
+    write_to_file("json", "logins.json", format_dict)
     print("logins.json created... ")
 
 with open("logins.json", "r") as l: # Loads json file and exports it into a readable dictionary for python
     login_dict = json.loads(l.read())
 print("logins.json loaded...\nLogins imported successfully!")
 
+
+# Format For Logins
 class login_entry: 
     def __init__(self, login, username, password): 
         self.login = login
@@ -52,13 +82,10 @@ class login_entry:
         }
         login_dict["logins"].append(new_login)
 
-def write_to_json(entry):
-    login_dict_json = json.dumps(login_dict, indent=2)
-    with open("logins.json", "w") as l:
-        l.write(login_dict_json)
 
+# List Login Function
 def list_all():
-    print("\n| " + name + "'s Logins")
+    print("\n| Logins: ")
     for x in range(len(login_dict["logins"])):
         print("\nLogin " + str(x + 1) + ":")
         print(login_dict["logins"][x]["login"])
