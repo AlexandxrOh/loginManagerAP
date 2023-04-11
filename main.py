@@ -10,7 +10,7 @@ import os
 import json
 
 print()
-debug_del = True
+debug_del = False
 if debug_del == True:
     if(os.path.exists("logins.json")):
         os.remove("logins.json")
@@ -32,7 +32,9 @@ def write_to_file(filetype, filename, export): # Avaiable File Formats: txt, jso
 
 
 # Preferences File creation
+agreement = False
 if(os.path.exists("config.txt") == False):
+    agreement = True
     print("ERROR: config.txt failed to load")
     correct_entry = False
     while(correct_entry == False):
@@ -157,10 +159,12 @@ def pass_check(password):
         print("Total Length: " + str(len(password_list)) + "/" + str(len_req))
         filtered_upper, filtered_lower, filtered_sym, filtered_num, password_list = len(filtered_upper), len(filtered_lower), len(filtered_sym), len(filtered_num), len(password)
         if(filtered_upper >= upper_req and filtered_lower >= lower_req and filtered_sym >= filtered_sym and filtered_num >= num_req and password_list >= len_req):
-            print("\n Password Accepted")
+            print("\nPassword Accepted")
+            input("\nPress enter to continue...")
             return "Password Accepted"
         else:
-            print("\n Password Not Accepted, please enter a new password.")
+            print("\nPassword Not Accepted, please enter a new password.")
+            input("\nPress enter to continue...")
             return "Password Not Accepted"
 
     elif(pass_strength_check == True):
@@ -175,7 +179,7 @@ def pass_check(password):
         return pass_strength
             
 # set debug_json to 'True' to enter a example login into the 'logins.json' file; CAUTION: WILL OVERRIDE 'logins.lson' FILE
-debug_json = True
+debug_json = False
 if(debug_json):
     print("DEBUG: Entry Appended to 'logins.json'...")
     debug_dict = {
@@ -195,5 +199,34 @@ if(debug_json):
     debug_dict_json = json.dumps(debug_dict, indent=2)
     with open("logins.json", "w") as l:
         l.write(debug_dict_json)
-
-print()
+start = True
+while(start == True):
+    if(agreement):
+        print("\nDisclaimer: This is a proof of concept program. I am not responsible for any damage caused by logins being saved in PLAIN TEXT.\nAccept EULA: (y/n)")
+        agreement_prompt = input("> ")
+        if agreement_prompt == "y":
+            agreement = False
+            os.remove("config.txt")
+        else:
+            exit()
+    print("\nText Based Login Manager | Author: Alexander Oh\n| New Login (n) | Login List (l) | Exit (e) |")
+    menu_prompt = input("> ")
+    if(menu_prompt == "n"):
+        login_add = False
+        while(login_add == False):
+            print("\n-New Login-")
+            newLogin = input("Please enter login name: ")
+            newUsername = input("Please enter Username: ")
+            newPassword = input("Please enter your password: ")
+            if(pass_check(newPassword) != "Password Accepted" and pass_req != "n"):
+                print("Restarting Login Credentials...")
+            else:
+                print("Appending to login list...")
+                login_add = True
+        login1 = login_entry(newLogin, newUsername, newPassword)
+        login1.add_login()
+        write_to_file("json", "logins.json", login_dict)
+    elif(menu_prompt == "l"):
+        list_all()
+    elif(menu_prompt == "e"):
+        start = False
